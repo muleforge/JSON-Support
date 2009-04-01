@@ -9,21 +9,33 @@
  */
 package org.mule.module.json.transformers;
 
-import org.mule.module.json.util.JsonUtils;
-import org.mule.transformer.AbstractTransformer;
-import org.mule.transformer.AbstractMessageAwareTransformer;
-import org.mule.api.transformer.TransformerException;
 import org.mule.api.MuleMessage;
+import org.mule.api.lifecycle.InitialisationException;
+import org.mule.api.transformer.TransformerException;
+import org.mule.module.json.util.JsonUtils;
+import org.mule.transformer.AbstractMessageAwareTransformer;
+import org.mule.util.StringUtils;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.logging.LogFactory;
+import net.sf.json.JsonConfig;
+import net.sf.json.util.PropertyFilter;
+
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * TODO
+ * Converts a java object to a JSON encoded object that can be consumed by other languages such as
+ * Javascript or Ruby.
+ * <p/>
+ * The JSON engine can be configured using the jsonConfig attribute. This is an object reference to an
+ * instance of: {@link net.sf.json.JsonConfig}. This can be created as a spring bean.
+ * <p/>
+ * Users can configure a comma-separated list of property names to exclude or include i.e.
+ * excludeProperties="address,postcode".
+ * <p/>
+ * The returnClass for this transformer is always java.lang.String, there is no need to set this.
  */
 public class ObjectToJson extends AbstractMessageAwareTransformer
 {
@@ -32,21 +44,41 @@ public class ObjectToJson extends AbstractMessageAwareTransformer
      */
     protected transient final Log logger = LogFactory.getLog(ObjectToJson.class);
 
+    protected JsonConfig jsonConfig;
+
+    protected String excludeProperties;
+    protected String includeProperties;
+
     private boolean handleException = false;
 
-    public ObjectToJson(){
+    public ObjectToJson()
+    {
         this.registerSourceType(Object.class);
         this.setReturnClass(String.class);
     }
 
-    public boolean isAcceptNull()
+    @Override
+    public void initialise() throws InitialisationException
     {
-        return true;
+        super.initialise();
+        if (getReturnClass().equals(Object.class))
+        {
+            logger.warn("The return class is not set not type validation will be done");
+        }
+
+        if (excludeProperties != null)
+        {
+            getJsonConfig().setExcludes(StringUtils.splitAndTrim(excludeProperties, ","));
+        }
+
+        if (includeProperties != null)
+        {
+            getJsonConfig().setJsonPropertyFilter(new IncludePropertiesFilter(StringUtils.splitAndTrim(includeProperties, ",")));
+        }
     }
 
-    public Object transform(MuleMessage message, String s) throws TransformerException
+    public Object transform(MuleMessage message, String encoding) throws TransformerException
     {
-        ObjectBean object = new ObjectBean();
         Object src = message.getPayload();
 
         // Checks if there's an exception
@@ -59,15 +91,29 @@ public class ObjectToJson extends AbstractMessageAwareTransformer
             src = this.getException(message.getExceptionPayload().getException());
         }
 
-        object.setType((src == null) ? null : src.getClass().getName());
-        object.setObject(src);
-
         if (logger.isDebugEnabled())
         {
             logger.debug("Converting payload " + src + " to " + String.class);
         }
 
-        String returnValue = JsonUtils.convertJavaObjectToJson(object);
+        String returnValue;
+        Class et = getJsonConfig().getEnclosedType();
+        try
+        {
+            if (et == null)
+            {
+                getJsonConfig().setEnclosedType(src.getClass());
+            }
+
+            returnValue = JsonUtils.convertJavaObjectToJson(src, getJsonConfig());
+        }
+        finally
+        {
+            if (et == null)
+            {
+                getJsonConfig().setEnclosedType(null);
+            }
+        }
 
         if (logger.isDebugEnabled())
         {
@@ -125,4 +171,61 @@ public class ObjectToJson extends AbstractMessageAwareTransformer
     {
         this.handleException = handleException;
     }
+
+    public JsonConfig getJsonConfig()
+    {
+        if (jsonConfig == null)
+        {
+            setJsonConfig(new JsonConfig());
+        }
+        return jsonConfig;
+    }
+
+    public void setJsonConfig(JsonConfig jsonConfig)
+    {
+        this.jsonConfig = jsonConfig;
+    }
+
+    public String getExcludeProperties()
+    {
+        return excludeProperties;
+    }
+
+    public void setExcludeProperties(String excludeProperties)
+    {
+        this.excludeProperties = excludeProperties;
+    }
+
+    public String getIncludeProperties()
+    {
+        return includeProperties;
+    }
+
+    public void setIncludeProperties(String includeProperties)
+    {
+        this.includeProperties = includeProperties;
+    }
+
+    private class IncludePropertiesFilter implements PropertyFilter
+    {
+        private String[] includedProperties;
+
+        private IncludePropertiesFilter(String[] includedProperties)
+        {
+            this.includedProperties = includedProperties;
+        }
+
+        public boolean apply(Object source, String name, Object value)
+        {
+            for (int i = 0; i < includedProperties.length; i++)
+            {
+                if (includedProperties[i].equals(name))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }
+

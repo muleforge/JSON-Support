@@ -9,28 +9,27 @@
  */
 package org.mule.module.json.util;
 
-import org.mule.module.json.transformers.ObjectBean;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import net.sf.json.JsonConfig;
 import net.sf.json.JSON;
-import net.sf.json.JSONSerializer;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+import net.sf.json.JsonConfig;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * TODO
+ * Utility methods for working with json type conversions
  */
 public class JsonUtils
 {
@@ -44,66 +43,41 @@ public class JsonUtils
     public static final String PATTERN_OBJECT = "\\{(.*)\\}";
     public static final String PATTERN_STRING = "(\"|\')(.*)(\"|\')";
 
-    public static Object[] convertJsonToArray(String jsonString, Class targetClass, Map classMap)
+    public static Object[] convertJsonToArray(String jsonString, JsonConfig config)
     {
 
-        if (classMap == null)
+
+        config.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+
+        JSON json = JSONSerializer.toJSON(jsonString, config);
+
+        if (config.getEnclosedType() != null && config.getEnclosedType().isArray())
         {
-            classMap = new HashMap();
+            Class c = config.getEnclosedType().getComponentType();
+            return (Object[]) JSONArray.toArray((JSONArray) json, c);
+
         }
-
-        JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
-        jsonConfig.setClassMap(classMap);
-
-        JSON json = JSONSerializer.toJSON(jsonString, jsonConfig);
-
-        return (Object[]) JSONArray.toArray((JSONArray) json, targetClass.getComponentType(), classMap);
-    }
-
-    public static Object convertJsonToBean(String jsonString, Class targetClass)
-    {
-        return convertJsonToBean(jsonString, targetClass, null);
+        return (Object[]) JSONArray.toArray((JSONArray) json, config);
     }
 
     /**
-     * @param jsonString Either an object, an array, or null. Otherwise, invalid JSON
-     *            string occurs.
+     * @param jsonString  Either an object, an array, or null. Otherwise, invalid JSON
+     *                    string occurs.
      * @param targetClass
      * @param classMap
      * @return
      */
-    public static Object convertJsonToBean(String jsonString, Class targetClass, Map classMap)
+    public static Object convertJsonToBean(String jsonString, JsonConfig config, Class returnType, Map classMapping)
     {
 
-        if (classMap == null)
+        if (classMapping == null)
         {
-            classMap = new HashMap();
+            classMapping = Collections.EMPTY_MAP;
         }
-        JSON json = JSONSerializer.toJSON(jsonString);
-        Object bean = JSONObject.toBean((JSONObject) json, targetClass, classMap);
+        JSON json = JSONSerializer.toJSON(jsonString, config);
+        Object bean = JSONObject.toBean((JSONObject) json, returnType, classMapping);
 
         return bean;
-    }
-
-    public static List convertJsonToList(String jsonString,
-                                         Class targetClass,
-                                         Class targetComponentClass,
-                                         Map classMap)
-    {
-
-        if (classMap == null)
-        {
-            classMap = new HashMap();
-        }
-
-        JsonConfig jsonConfig = new JsonConfig();
-        jsonConfig.setArrayMode(JsonConfig.MODE_LIST);
-        jsonConfig.setClassMap(classMap);
-
-        JSON json = JSONSerializer.toJSON(jsonString, jsonConfig);
-
-        return JSONArray.toList((JSONArray) json, targetComponentClass, classMap);
     }
 
     public static BigDecimal convertJsonToNumber(String jsonString)
@@ -119,10 +93,10 @@ public class JsonUtils
      * @param jsonString
      * @return
      */
-    public static BigDecimal[] convertJsonToNumberArray(String jsonString)
+    public static BigDecimal[] convertJsonToNumberArray(String jsonString, JsonConfig config)
     {
 
-        Object[] objs = convertJsonToArray(jsonString, Object[].class, null);
+        Object[] objs = convertJsonToArray(jsonString, config);
         BigDecimal[] bds = new BigDecimal[objs.length];
 
         for (int i = 0; i < objs.length; i++)
@@ -153,33 +127,38 @@ public class JsonUtils
      * @param classMap
      * @return
      */
-    public static Object convertJsonToJavaObject(String jsonString,
-                                                 Class targetClass,
-                                                 Class targetComponentClass,
-                                                 Map classMap)
+    public static Object convertJsonToJavaObject(String jsonString, JsonConfig config, Class returnType, Map mappings)
     {
 
         if (logger.isDebugEnabled())
         {
-            logger.debug("Converting jsonString to Java object: jsonString=" + jsonString + ", targetClass="
-                         + targetClass + ", classMap=" + classMap);
+            logger.debug("Converting jsonString to Java object: jsonString=" + jsonString + ", config=" + config);
         }
         Object returnValue = null;
 
         if (isArray(jsonString))
         {
-            if (List.class.isAssignableFrom(targetClass))
+            if (List.class.isAssignableFrom(config.getEnclosedType()))
             {
-                returnValue = convertJsonToList(jsonString, targetClass, targetComponentClass, classMap);
+                JSON json = JSONSerializer.toJSON(jsonString, config);
+                returnValue = JSONArray.toCollection((JSONArray) json, config);
+            }
+            //Todo Sets don't seem to work
+            else if (Set.class.isAssignableFrom(config.getEnclosedType()))
+            {
+                //Not sure why Json lib doesn't do this automatically
+                config.setCollectionType(config.getEnclosedType());
+                JSON json = JSONSerializer.toJSON(jsonString, config);
+                returnValue = JSONArray.toCollection((JSONArray) json, config);
             }
             else
             {
-                returnValue = convertJsonToArray(jsonString, targetClass, classMap);
+                returnValue = convertJsonToArray(jsonString, config);
             }
         }
         else if (isObject(jsonString))
         {
-            returnValue = convertJsonToBean(jsonString, targetClass, classMap);
+            returnValue = convertJsonToBean(jsonString, config, returnType, mappings);
         }
         else if (isBoolean(jsonString))
         {
@@ -200,29 +179,19 @@ public class JsonUtils
         else
         {
             throw new IllegalArgumentException(
-                "Provided JSON string matches neither of the known type: jsonString=" + jsonString);
+                    "Provided JSON string matches neither of the known type: jsonString=" + jsonString);
         }
 
         if (logger.isDebugEnabled())
         {
             logger.debug("Converted and returning value '" + returnValue + "', of type '"
-                         + ((returnValue != null) ? returnValue.getClass().getName() : null) + "'");
-        }
-        if (logger.isWarnEnabled())
-        {
-
-            if (targetClass != null && !targetClass.isInstance(returnValue))
-            {
-                logger.warn("Converted type '" + (returnValue == null ? null : returnValue.getClass())
-                            + "' doesn't match with target type '" + targetClass + "'");
-            }
-
+                    + ((returnValue != null) ? returnValue.getClass().getName() : null) + "'");
         }
 
         return returnValue;
     }
 
-    public static String convertJavaObjectToJson(Object object)
+    public static String convertJavaObjectToJson(Object object, JsonConfig config)
     {
 
         if (object == null)
@@ -241,7 +210,7 @@ public class JsonUtils
         }
 
         // Else, we try some luck then
-        return JSONSerializer.toJSON(object).toString();
+        return JSONSerializer.toJSON(object, config).toString();
     }
 
     /**
@@ -300,7 +269,7 @@ public class JsonUtils
     public static boolean isString(String jsonString)
     {
         return !isNumber(jsonString) && !isBoolean(jsonString) && !isNull(jsonString) && !isArray(jsonString)
-               && !isObject(jsonString);
+                && !isObject(jsonString);
     }
 
     private static boolean isMatched(String string, String patternString)
@@ -314,11 +283,12 @@ public class JsonUtils
 
     /**
      * Converts a DynaBean to intended Java object.
+     *
      * @param clazz
      * @param dynaBean
      * @return
      */
-    public static Object getObjectFromDynaBean(Class clazz, DynaBean dynaBean)
+    public static Object getObjectFromDynaBean(Class clazz, DynaBean dynaBean) throws Exception
     {
 
         Object returnValue = null;
@@ -326,25 +296,16 @@ public class JsonUtils
         if (clazz == null || dynaBean == null)
         {
             throw new NullPointerException("Class instance or DynaBean instance should not be null, clazz="
-                                           + clazz + ", dynaBean=" + dynaBean);
+                    + clazz + ", dynaBean=" + dynaBean);
         }
 
-        try
-        {
-            returnValue = clazz.newInstance();
-            org.apache.commons.beanutils.BeanUtils.copyProperties(returnValue, dynaBean);
-        }
-        catch (Exception e)
-        {
-            logger.warn("Could not convert '" + dynaBean + "' due to " + e.toString());
-            return null;
-        }
+        returnValue = clazz.newInstance();
+        org.apache.commons.beanutils.BeanUtils.copyProperties(returnValue, dynaBean);
 
         return returnValue;
     }
 
-    public static Object getObjectFromDynaBean(String className, DynaBean dynaBean)
-        throws ClassNotFoundException
+    public static Object getObjectFromDynaBean(String className, DynaBean dynaBean) throws Exception
     {
 
         Class clazz = Class.forName(className);
@@ -359,41 +320,24 @@ public class JsonUtils
      * @param jsonString
      * @return
      */
-    public static Object getObjectFromJsonString(String jsonString)
+    public static Object getObjectFromJsonString(String jsonString, JsonConfig config, Class returnClass) throws Exception
     {
 
-        Object returnValue = null;
+        Object returnValue;
+        Object object = JsonUtils.convertJsonToJavaObject(jsonString, config, returnClass, null);
 
-        try
+        if (object instanceof DynaBean)
         {
-            ObjectBean objectBean = (ObjectBean) JsonUtils.convertJsonToJavaObject(jsonString,
-                ObjectBean.class, null, null);
-            Class clazz = Class.forName(objectBean.getType());
-            Object object = objectBean.getObject();
-
-            if (object == null)
-            {
-                return null;
-            }
-
-            if (object instanceof DynaBean)
-            {
-                returnValue = getObjectFromDynaBean(clazz, (DynaBean) object);
-            }
-            else
-            {
-                returnValue = object;
-            }
-
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Returning value of type " + ((returnValue == null) ? null : returnValue.getClass()));
-            }
+            returnValue = getObjectFromDynaBean(returnClass, (DynaBean) object);
         }
-        catch (Exception e)
+        else
         {
-            e.printStackTrace();
-            throw new RuntimeException("Could not obtain object due to exception", e);
+            returnValue = object;
+        }
+
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("Returning value of type " + ((returnValue == null) ? null : returnValue.getClass()));
         }
 
         return returnValue;
