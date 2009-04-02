@@ -1,0 +1,45 @@
+<assembly>
+    <id>Batchtrade</id>
+    <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <includes>
+                <include>pom.xml</include>
+                <include>src/**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target</directory>
+            <outputDirectory>lib/user</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>target/site</directory>
+            <outputDirectory>site</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>examples/target</directory>
+            <outputDirectory>examples</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+
+        <dependencySet>
+            <outputDirectory>lib/user</outputDirectory>
+            <!--<outputFileNameMapping>${artifactId}-${version}.${e}</outputFileNameMapping>-->
+            <scope>runtime</scope>
+            <!--<includes>-->
+            <!--<include>net.sf.json-lib:*</include>-->
+            <!--</includes>-->
+        </dependencySet>
+    </dependencySets>
+</assembly>
