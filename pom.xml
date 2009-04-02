@@ -1,14 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-json</artifactId>
     <name>JSON</name>
     <description>Implementation of JSON transformers for Mule</description>
     <packaging>jar</packaging>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.2</version>
     <properties>
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
@@ -21,19 +18,15 @@
         <url>http://mule.mulesource.org/jira/browse/${shortId}</url>
     </issueManagement>
     <scm>
-        <connection>
-            scm:svn:http://svn.muleforge.org/${domainName}/
-        </connection>
-        <developerConnection>
-            scm:svn:https://svn.muleforge.org/${domainName}/
-        </developerConnection>
+        <connection>scm:svn:http://svn.muleforge.org/json-support/tags/mule-module-json-2.2</connection>
+        <developerConnection>scm:svn:https://svn.muleforge.org/json-support/tags/mule-module-json-2.2</developerConnection>
         <tag>HEAD</tag>
-        <url>http://svn.${domainName}.muleforge.org/</url>
+        <url>http://svn.json-support.muleforge.org/tags/mule-module-json-2.2</url>
     </scm>
     <ciManagement>
         <system>Bamboo</system>
         <url>http://bamboo.muleforge.org/browse/${shortId}</url>
-        <notifiers/>
+        <notifiers />
     </ciManagement>
     <distributionManagement>
         <repository>
@@ -159,13 +152,13 @@
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
             <version>${muleVersion}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${muleVersion}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>
@@ -209,4 +202,4 @@
             <comments>A business-friendly OSI approved license</comments>
         </license>
     </licenses>
-</project>		
+</project>
