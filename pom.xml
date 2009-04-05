@@ -88,7 +88,7 @@
                             <fromDir>${basedir}/src/main/resources/META-INF</fromDir>
                             <includes>*.xsd</includes>
                             <url>
-                                ${project.distributionManagement.repository.url}/${domainName}/${basePackage}/${artifactId}/${version}
+                                ${project.distributionManagement.repository.url}/${basePackage}/${artifactId}/${version}
                             </url>
                             <serverId>muleforge.webdav.releases</serverId>
                         </configuration>
