@@ -10,6 +10,7 @@
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
         <domainName>json-support</domainName>
+        <basePackage>org/mule/modules</basePackage>
         <license.id>CPAL 1.0</license.id>
         <license.url>http://mule.mulesource.org/display/MULE/License</license.url>
     </properties>
@@ -60,6 +61,7 @@
                     </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -86,14 +88,13 @@
                             <fromDir>${basedir}/src/main/resources/META-INF</fromDir>
                             <includes>*.xsd</includes>
                             <url>
-                                dav:https://dav.muleforge.org/repository/${domainName}/org/mule/modules/${artifactId}/${version}
+                                ${project.distributionManagement.repository.url}/${domainName}/${basePackage}/${artifactId}/${version}
                             </url>
                             <serverId>muleforge.webdav.releases</serverId>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
     <reporting>
@@ -145,14 +146,12 @@
                 <configuration>
                     <links>
                         <link>
-                            http://java.sun.com/j2ee/1.4/docs/api
-                        </link>
-                        <link>
-                            http://java.sun.com/j2se/1.4.2/docs/api
+                            http://java.sun.com/javase/6/docs/api/
                         </link>
                         <link>
                             http://java.sun.com/j2se/1.5.0/docs/api
                         </link>
+
                     </links>
                 </configuration>
             </plugin>
@@ -176,13 +175,11 @@
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
             <version>${muleVersion}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${muleVersion}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>
