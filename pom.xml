@@ -21,7 +21,6 @@
         <connection>scm:svn:http://svn.muleforge.org/json-support/tags/mule-module-json-2.2</connection>
         <developerConnection>scm:svn:https://svn.muleforge.org/json-support/tags/mule-module-json-2.2
         </developerConnection>
-        <tag>HEAD</tag>
         <url>http://svn.json-support.muleforge.org/tags/mule-module-json-2.2</url>
     </scm>
     <ciManagement>
@@ -71,6 +70,28 @@
                     <encoding>ISO-8859-1</encoding>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>1.0-beta-1</version>
+                <executions>
+                    <execution>
+                        <id>upload-schema</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>upload</goal>
+                        </goals>
+                        <configuration>
+                            <fromDir>${basedir}/src/main/resources/META-INF</fromDir>
+                            <includes>*.xsd</includes>
+                            <url>dav:https://dav.muleforge.org/repository/${domainName}/</url>
+                            <serverId>muleforge.webdav.releases</serverId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
     <reporting>
@@ -79,15 +100,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
-            <!--<plugin>-->
-            <!--<groupId>org.apache.maven.plugins</groupId>-->
-            <!--<artifactId>maven-checkstyle-plugin</artifactId>-->
-            <!--<configuration>-->
-            <!--<configLocation>-->
-            <!--http://www.muleforge.org/download/checkstyle.xml?version=1-->
-            <!--</configLocation>-->
-            <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>
+                        http://www.muleforge.org/download/checkstyle.xml?version=1
+                    </configLocation>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -188,7 +209,6 @@
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
             <version>1.1</version>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 
