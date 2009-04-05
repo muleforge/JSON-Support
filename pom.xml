@@ -31,11 +31,11 @@
     <distributionManagement>
         <repository>
             <id>muleforge.webdav.releases</id>
-            <url>dav:https://dav.muleforge.org/repository/${domainName}/</url>
+            <url>dav:https://dav.muleforge.org/repository/${domainName}</url>
         </repository>
         <snapshotRepository>
             <id>muleforge.webdav.snapshots</id>
-            <url>dav:https://dav.muleforge.org/snapshots.repository/${domainName}/</url>
+            <url>dav:https://dav.muleforge.org/snapshots.repository/${domainName}</url>
         </snapshotRepository>
         <site>
             <id>muleforge.webdav.sites</id>
@@ -85,7 +85,9 @@
                         <configuration>
                             <fromDir>${basedir}/src/main/resources/META-INF</fromDir>
                             <includes>*.xsd</includes>
-                            <url>dav:https://dav.muleforge.org/repository/${domainName}/</url>
+                            <url>
+                                dav:https://dav.muleforge.org/repository/${domainName}/org/mule/modules/${artifactId}/${version}
+                            </url>
                             <serverId>muleforge.webdav.releases</serverId>
                         </configuration>
                     </execution>
