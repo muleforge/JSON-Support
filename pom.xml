@@ -6,7 +6,7 @@
     <name>JSON</name>
     <description>Implementation of JSON transformers for Mule</description>
     <packaging>jar</packaging>
-    <version>2.2</version>
+    <version>2.2-SNAPSHOT</version>
     <properties>
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
