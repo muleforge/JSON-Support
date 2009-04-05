@@ -1,15 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-json</artifactId>
     <name>JSON</name>
     <description>Implementation of JSON transformers for Mule</description>
     <packaging>jar</packaging>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.2-SNAPSHOT</version>
     <properties>
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
         <domainName>json-support</domainName>
+        <basePackage>org/mule/modules</basePackage>
         <license.id>CPAL 1.0</license.id>
         <license.url>http://mule.mulesource.org/display/MULE/License</license.url>
     </properties>
@@ -19,13 +21,14 @@
     </issueManagement>
     <scm>
         <connection>scm:svn:http://svn.muleforge.org/json-support/tags/mule-module-json-2.2</connection>
-        <developerConnection>scm:svn:https://svn.muleforge.org/json-support/tags/mule-module-json-2.2</developerConnection>
+        <developerConnection>scm:svn:https://svn.muleforge.org/json-support/tags/mule-module-json-2.2
+        </developerConnection>
         <url>http://svn.json-support.muleforge.org/tags/mule-module-json-2.2</url>
     </scm>
     <ciManagement>
         <system>Bamboo</system>
         <url>http://bamboo.muleforge.org/browse/${shortId}</url>
-        <notifiers />
+        <notifiers/>
     </ciManagement>
     <distributionManagement>
         <repository>
@@ -59,6 +62,7 @@
                     </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -85,14 +89,13 @@
                             <fromDir>${basedir}/src/main/resources/META-INF</fromDir>
                             <includes>*.xsd</includes>
                             <url>
-                                dav:https://dav.muleforge.org/repository/${domainName}/org/mule/modules/${artifactId}/${version}
+                                ${project.distributionManagement.repository.url}/${domainName}/${basePackage}/${artifactId}/${version}
                             </url>
                             <serverId>muleforge.webdav.releases</serverId>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
     <reporting>
@@ -144,14 +147,12 @@
                 <configuration>
                     <links>
                         <link>
-                            http://java.sun.com/j2ee/1.4/docs/api
-                        </link>
-                        <link>
-                            http://java.sun.com/j2se/1.4.2/docs/api
+                            http://java.sun.com/javase/6/docs/api/
                         </link>
                         <link>
                             http://java.sun.com/j2se/1.5.0/docs/api
                         </link>
+
                     </links>
                 </configuration>
             </plugin>
@@ -175,13 +176,11 @@
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
             <version>${muleVersion}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${muleVersion}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>

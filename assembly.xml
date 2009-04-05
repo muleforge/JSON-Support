@@ -56,6 +56,10 @@
                 <exclude>jaxen:*</exclude>
                 <exclude>xml-apis:*</exclude>
                 <exclude>xerces:*</exclude>
+
+                <!-- Mule uses SLF4J with Log4J, not including these in the distribution will avoid unnecessary logging headaches -->
+                <exclude>commons-logging:*</exclude>
+                <exclude>log4j:*</exclude>
             </excludes>
             <scope>runtime</scope>
         </dependencySet>
