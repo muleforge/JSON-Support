@@ -5,7 +5,7 @@
     <name>JSON</name>
     <description>Implementation of JSON transformers for Mule</description>
     <packaging>jar</packaging>
-    <version>2.2</version>
+    <version>2.3-SNAPSHOT</version>
     <properties>
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
@@ -20,8 +20,7 @@
     </issueManagement>
     <scm>
         <connection>scm:svn:http://svn.muleforge.org/json-support/tags/mule-module-json-2.2</connection>
-        <developerConnection>scm:svn:https://svn.muleforge.org/json-support/tags/mule-module-json-2.2
-        </developerConnection>
+        <developerConnection>scm:svn:https://svn.muleforge.org/json-support/tags/mule-module-json-2.2</developerConnection>
         <url>http://svn.json-support.muleforge.org/tags/mule-module-json-2.2</url>
     </scm>
     <ciManagement>
