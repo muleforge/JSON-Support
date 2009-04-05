@@ -220,7 +220,6 @@
             <name>${license.id}</name>
             <url>${license.url}</url>
             <distribution>repo</distribution>
-            <comments>A business-friendly OSI approved license</comments>
         </license>
     </licenses>
 </project>
