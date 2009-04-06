@@ -76,8 +76,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <version>2.0-beta-7</version>
                 <configuration>
-                    <!-- We only do this at deploy time since it can be time consuming. However, before doing a
+                    <!-- We only do this at release time since it can be time consuming. However, before doing a
                         release of your project and deploying it you nedd to run 'mvn assembly:assembly' and check that
                         the distribution is created correctly -->
                     <preparationGoals>assembly:assembly</preparationGoals>
@@ -106,7 +107,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>
