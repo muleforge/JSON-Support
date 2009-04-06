@@ -13,7 +13,8 @@
     <json:json-to-object-transformer name="jsonToOrangeArray" returnClass="org.mule.tck.testmodels.fruit.Orange"
                                      jsonConfig-ref="jsonConfig"/>
 
-    <json:object-to-json-transformer name="orangeToJson" excludeProperties="brand, radius"/>
+    <json:object-to-json-transformer name="orangeToJson" excludeProperties="brand, radius"
+                                     sourceClass="org.mule.tck.testmodels.fruit.Orange"/>
 
     <json:json-to-xml-transformer name="jsonToXml" arrayElementName="array" objectElementName="obj"
                                   valueElementName="value"/>

@@ -39,6 +39,7 @@ public class JsonNamespaceHandlerTestCase extends FunctionalTestCase
         ObjectToJson orangeArrayToJson = (ObjectToJson) muleContext.getRegistry().lookupObject("orangeToJson");
         assertNotNull(orangeArrayToJson);
         assertEquals(String.class, orangeArrayToJson.getReturnClass());
+        assertEquals(Orange.class, orangeArrayToJson.getSourceClass());
         assertEquals("brand, radius", orangeArrayToJson.getExcludeProperties());
 
         JsonToXml jsonToXml = (JsonToXml) muleContext.getRegistry().lookupObject("jsonToXml");

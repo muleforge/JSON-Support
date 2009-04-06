@@ -78,7 +78,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.0-beta-7</version>
                 <configuration>
-                    <!-- We only do this at release time since it can be time consuming. However, before doing a
+                    <!-- We only do this at release time. However, before doing a
                         release of your project and deploying it you nedd to run 'mvn assembly:assembly' and check that
                         the distribution is created correctly -->
                     <preparationGoals>assembly:assembly</preparationGoals>
@@ -98,8 +98,8 @@
                             <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
                         for this module or transport -->
                             <goal>deploy-schema</goal>
-                            <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
-                        for this module or transport -->
+                            <!-- Attached to the deploy lifecycle this plugin is Used for deploying the projects
+                            distribution archives (generated from the assembly.xml descriptor) -->
                             <goal>deploy-distro</goal>
                         </goals>
                     </execution>

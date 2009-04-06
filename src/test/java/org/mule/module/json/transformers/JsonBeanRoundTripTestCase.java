@@ -12,6 +12,7 @@ public class JsonBeanRoundTripTestCase extends AbstractTransformerTestCase
     {
         ObjectToJson trans = new ObjectToJson();
         trans.setExcludeProperties("banana");
+        trans.setSourceClass(FruitCollection.class);
         trans.initialise();
         return trans;
     }

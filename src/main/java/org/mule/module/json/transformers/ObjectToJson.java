@@ -49,6 +49,8 @@ public class ObjectToJson extends AbstractMessageAwareTransformer
     protected String excludeProperties;
     protected String includeProperties;
 
+    protected Class sourceClass;
+
     private boolean handleException = false;
 
     public ObjectToJson()
@@ -74,6 +76,13 @@ public class ObjectToJson extends AbstractMessageAwareTransformer
         if (includeProperties != null)
         {
             getJsonConfig().setJsonPropertyFilter(new IncludePropertiesFilter(StringUtils.splitAndTrim(includeProperties, ",")));
+        }
+
+        //restrict the handled types
+        if (getSourceClass() != null)
+        {
+            sourceTypes.clear();
+            registerSourceType(getSourceClass());
         }
     }
 
@@ -204,6 +213,16 @@ public class ObjectToJson extends AbstractMessageAwareTransformer
     public void setIncludeProperties(String includeProperties)
     {
         this.includeProperties = includeProperties;
+    }
+
+    public Class getSourceClass()
+    {
+        return sourceClass;
+    }
+
+    public void setSourceClass(Class sourceClass)
+    {
+        this.sourceClass = sourceClass;
     }
 
     private class IncludePropertiesFilter implements PropertyFilter
