@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-json</artifactId>
     <name>JSON</name>
     <description>Implementation of JSON transformers for Mule</description>
     <packaging>jar</packaging>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.2</version>
     <properties>
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
@@ -27,7 +26,7 @@
     <ciManagement>
         <system>Bamboo</system>
         <url>http://bamboo.muleforge.org/browse/${shortId}</url>
-        <notifiers/>
+        <notifiers />
     </ciManagement>
     <distributionManagement>
         <repository>
