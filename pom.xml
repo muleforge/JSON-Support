@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-json</artifactId>
     <name>JSON</name>
     <description>Implementation of JSON transformers for Mule</description>
     <packaging>jar</packaging>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.2</version>
     <properties>
         <muleVersion>2.2.0</muleVersion>
         <shortId>JSON</shortId>
@@ -27,7 +26,7 @@
     <ciManagement>
         <system>Bamboo</system>
         <url>http://bamboo.muleforge.org/browse/${shortId}</url>
-        <notifiers/>
+        <notifiers />
     </ciManagement>
     <distributionManagement>
         <repository>
@@ -52,29 +51,6 @@
             </extension>
         </extensions>
         <plugins>
-            <!-- Responsible for creating the release distribution for this project -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <finalName>${artifactId}-${version}</finalName>
-                    <descriptors>
-                        <descriptor>assembly.xml</descriptor>
-                    </descriptors>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <!-- We only do this at deploy time since it can be time consuming. However, before doing a
-                        release of your project and deploying it you nedd to run 'mvn assembly:assembly' and check that
-                        the distribution is created correctly -->
-                        <id>creat-assembly</id>
-                        <phase>release:prepare</phase>
-                        <goals>
-                            <goal>assembly</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -85,27 +61,44 @@
                 </configuration>
             </plugin>
 
+            <!-- Responsible for creating the release distribution for this project -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>${artifactId}-${version}</finalName>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <!-- We only do this at deploy time since it can be time consuming. However, before doing a
+                        release of your project and deploying it you nedd to run 'mvn assembly:assembly' and check that
+                        the distribution is created correctly -->
+                    <preparationGoals>assembly:assembly</preparationGoals>
+                </configuration>
+            </plugin>
+
             <!-- Used for deploying zip and tar.gz  distributions to MuleForge. Called using:
-                 mvn muleforge:deploy-distro-->
+           mvn muleforge:deploy-distro-->
             <plugin>
                 <groupId>org.mule.tools</groupId>
                 <artifactId>maven-muleforge-plugin</artifactId>
                 <executions>
                     <execution>
-                        <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
-                        for this module or transport -->
-                        <id>upload-schema</id>
+                        <id>upload-muleforge-artifacts</id>
                         <phase>deploy</phase>
                         <goals>
-                            <goal>deploy-schema</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
+                            <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
                         for this module or transport -->
-                        <id>upload-distro</id>
-                        <phase>site:deploy</phase>
-                        <goals>
+                            <goal>deploy-schema</goal>
+                            <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
+                        for this module or transport -->
                             <goal>deploy-distro</goal>
                         </goals>
                     </execution>
@@ -113,6 +106,7 @@
             </plugin>
         </plugins>
     </build>
+    
     <reporting>
         <plugins>
             <plugin>
