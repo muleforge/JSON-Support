@@ -67,7 +67,7 @@
                         release of your project and deploying it you nedd to run 'mvn assembly:assembly' and check that
                         the distribution is created correctly -->
                         <id>creat-assembly</id>
-                        <phase>deploy</phase>
+                        <phase>site:deploy</phase>
                         <goals>
                             <goal>assembly</goal>
                         </goals>
@@ -97,6 +97,15 @@
                         <phase>deploy</phase>
                         <goals>
                             <goal>deploy-schema</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <!-- Attached to the deploy lifecycle this plugin is Used for deploying any config schemas
+                        for this module or transport -->
+                        <id>upload-distro</id>
+                        <phase>site:deploy</phase>
+                        <goals>
+                            <goal>deploy-distro</goal>
                         </goals>
                     </execution>
                 </executions>
