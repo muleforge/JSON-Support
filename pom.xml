@@ -67,7 +67,7 @@
                         release of your project and deploying it you nedd to run 'mvn assembly:assembly' and check that
                         the distribution is created correctly -->
                         <id>creat-assembly</id>
-                        <phase>site:deploy</phase>
+                        <phase>release:prepare</phase>
                         <goals>
                             <goal>assembly</goal>
                         </goals>
