@@ -135,12 +135,14 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-                <xsd:attribute name="sourceClass" type="xsd:NMTOKEN">
+                <xsd:attribute name="sourceClass" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             Restrict the accepted source class object to a specific type. If not set the transformer
-                            will handle
-                            all source types.
+                            will handle all source types. Note that if you need to specify an array type you need to
+                            prefix the class name with '[L' and postfixed with ';'. For example, if you want process
+                            only a an Orange[] array, you set the source class to
+                            '[Lorg.mule.tck.testmodels.fruit.Orange;'.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
